@@ -135,7 +135,10 @@ export const getAllDocs = (req, res) => {
 };
 
 export const addDoc = (req, res) => {
-  console.log(req.body);
-  // data.push();
-  res.status(201).json({});
+  const newDoc = {
+    id: Date.now(),
+    ...req.body
+  };
+  data.push(newDoc);
+  res.status(201).json(newDoc);
 };
