@@ -4,8 +4,10 @@ import "dotenv/config";
 import docsRouter from "./routes/docs.js";
 
 const PORT = process.env.PORT;
+const CORS_ORIGIN = process.env.CORS_ORIGIN;
+
 const corsOptions = {
-  origin: "http://localhost:3000",
+  origin: CORS_ORIGIN,
   optionsSuccessStatus: 200,
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
   allowedHeaders: "Content-Type",
