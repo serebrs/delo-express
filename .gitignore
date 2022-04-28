@@ -19,6 +19,8 @@ node_modules
 *.sw?
 
 /_bak
+*.bak
+*.mwb
 *.bat
 todo
 .env

@@ -1,4 +1,5 @@
 import path from "path";
+import { validationResult } from "express-validator";
 
 let data = [
   {
@@ -152,6 +153,10 @@ export const getAllDocs = (req, res) => {
 };
 
 export const addDoc = (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
   const newDoc = {
     id: Date.now(),
     ...req.body,
@@ -170,6 +175,5 @@ export const viewDoc = (req, res) => {
   const docPath = path.resolve("files/", doc.file);
   if (path.extname(doc.file) === ".pdf") {
     res.status(200).sendFile(docPath);
-  }
-  else res.status(200).download(docPath);
+  } else res.status(200).download(docPath);
 };
