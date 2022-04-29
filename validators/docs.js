@@ -1,20 +1,41 @@
 export const docsValidator = {
   type: {
-    // in: ["body"],
-    errorMessage: "Поле 'Тип' должно быть числовым",
-    isInt: true,
+    isInt: {
+      errorMessage: "Это поле должно быть числовым",
+      options: { min: 0, max: 20 },
+    },
     toInt: true,
   },
   title: {
     isLength: {
-      errorMessage: "Поле 'Название' должно быть длиной как минимум 7 символов",
-      options: { min: 7 },
+      errorMessage: "Это поле должно быть не короче 5 символов",
+      options: { min: 5 },
     },
+    escape: true,
+    trim: true,
   },
-  num: {},
+  num: {
+    isLength: {
+      errorMessage: "Это поле должно быть не короче 1 символа",
+      options: { min: 1 },
+    },
+    escape: true,
+    trim: true,
+  },
   date: {
-    errorMessage: "Поле 'Дата' должно быть в формате YYYY-MM-DD",
-    
+    isDate: {
+      errorMessage: "Это поле должно быть в формате YYYY-MM-DD",
+      options: { format: "YYYY-MM-DD" },
+    },
+    toDate: true,
   },
   person: {},
+  file: {
+    isLength: {
+      errorMessage: "Это поле должно быть не короче 1 символа",
+      options: { min: 1 },
+    },
+    escape: true,
+    trim: true,
+  },
 };
