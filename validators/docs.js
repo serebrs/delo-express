@@ -7,20 +7,24 @@ export const docsValidator = {
     toInt: true,
   },
   title: {
+    escape: true,
+    trim: true,
     isLength: {
       errorMessage: "Это поле должно быть не короче 5 символов",
       options: { min: 5 },
     },
-    escape: true,
-    trim: true,
+    // matches: {
+    //   errorMessage: "Это поле должно быть буквенно-цифровым",
+    //   pattern: /[а-яА-ЯёЁa-zA-Z0-9]+$/,
+    // },
   },
   num: {
+    escape: true,
+    trim: true,
     isLength: {
       errorMessage: "Это поле должно быть не короче 1 символа",
       options: { min: 1 },
     },
-    escape: true,
-    trim: true,
   },
   date: {
     isDate: {
@@ -31,11 +35,11 @@ export const docsValidator = {
   },
   person: {},
   file: {
+    escape: true,
+    trim: true,
     isLength: {
       errorMessage: "Это поле должно быть не короче 1 символа",
       options: { min: 1 },
     },
-    escape: true,
-    trim: true,
   },
 };
