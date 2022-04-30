@@ -13,10 +13,7 @@ export const docsValidator = {
       errorMessage: "Это поле должно быть не короче 5 символов",
       options: { min: 5 },
     },
-    // matches: {
-    //   errorMessage: "Это поле должно быть буквенно-цифровым",
-    //   pattern: /[а-яА-ЯёЁa-zA-Z0-9]+$/,
-    // },
+    // matches: /[а-яА-ЯёЁa-zA-Z0-9!@()"".,\-?:;]+$/, // FIXME
   },
   num: {
     escape: true,
@@ -31,7 +28,7 @@ export const docsValidator = {
       errorMessage: "Это поле должно быть в формате YYYY-MM-DD",
       options: { format: "YYYY-MM-DD" },
     },
-    toDate: true,
+    // toDate: true,
   },
   person: {},
 };

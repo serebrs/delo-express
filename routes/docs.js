@@ -1,8 +1,8 @@
+import multer from "multer";
 import { Router } from "express";
 import { checkSchema } from "express-validator";
-import { getAllDocs, addDoc, deleteDoc, viewDoc } from "../controllers/docs.js";
 import { docsValidator } from "../validators/docs.js";
-import multer from "multer";
+import { getAllDocs, addDoc, deleteDoc, viewDoc } from "../controllers/docs.js";
 
 const storage = multer.diskStorage({
   destination: "./uploads",
