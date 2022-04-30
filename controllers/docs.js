@@ -171,6 +171,12 @@ export const deleteDoc = (req, res) => {
   res.status(200).json({ message: "Документ успешно удален" });
 };
 
+export const changeDoc = (req, res) => {
+  const idx = data.findIndex((r) => r.id === +req.params.id);
+  data[idx] = { ...req.body, file: req.file.filename };
+  res.status(200).json({ message: "Документ успешно изменен" });
+};
+
 export const viewDoc = (req, res) => {
   const doc = data.find((r) => r.id === +req.params.id);
   const docPath = path.resolve("uploads/", doc.file);
