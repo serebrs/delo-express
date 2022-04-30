@@ -163,7 +163,6 @@ export const addDoc = (req, res) => {
     file: req.file.filename,
   };
   data.push(newDoc);
-  console.log(json(newDoc));
   res.status(201).json(newDoc);
 };
 
