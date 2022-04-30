@@ -34,12 +34,4 @@ export const docsValidator = {
     toDate: true,
   },
   person: {},
-  file: {
-    escape: true,
-    trim: true,
-    isLength: {
-      errorMessage: "Это поле должно быть не короче 1 символа",
-      options: { min: 1 },
-    },
-  },
 };

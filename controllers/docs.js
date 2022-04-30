@@ -157,6 +157,10 @@ export const addDoc = (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
+  console.log(req.body.type);
+  console.log(req.body.person);
+  console.log(req.file);
+  
   const newDoc = {
     id: Date.now(),
     ...req.body,
