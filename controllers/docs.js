@@ -160,10 +160,11 @@ export const addDoc = (req, res) => {
   console.log(req.body.type);
   console.log(req.body.person);
   console.log(req.file);
-  
+
   const newDoc = {
     id: Date.now(),
     ...req.body,
+    file: req.file.filename,
   };
   data.push(newDoc);
   res.status(201).json(newDoc);
@@ -176,7 +177,7 @@ export const deleteDoc = (req, res) => {
 
 export const viewDoc = (req, res) => {
   const doc = data.find((r) => r.id === +req.params.id);
-  const docPath = path.resolve("files/", doc.file);
+  const docPath = path.resolve("uploads/", doc.file);
   if (path.extname(doc.file) === ".pdf") {
     res.status(200).sendFile(docPath);
   } else res.status(200).download(docPath);
