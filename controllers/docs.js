@@ -29,7 +29,7 @@ let data = [
     title:
       "The advantage is that the dev machine does not need to have all of the build tools and environments installed",
     person: ["Александров А.А."],
-    file: "file.pdf",
+    file: "file1.pdf",
   },
   {
     id: 4,
@@ -39,7 +39,7 @@ let data = [
     title:
       "To run our container to support a development workflow, we will do the following",
     person: ["J. Cooper", "Сидоров С.С."],
-    file: "file.pdf",
+    file: "file1.pdf",
   },
   {
     id: 5,
@@ -48,7 +48,7 @@ let data = [
     date: "2021-12-05",
     title: "Install all dependencies, including the dev dependencies",
     person: ["J. Cooper"],
-    file: "file.pdf",
+    file: "file1.pdf",
   },
   {
     id: 6,
@@ -58,7 +58,7 @@ let data = [
     title:
       "Regional Paradigm Technician Regional Paradigm Technician Regional Paradigm Technician",
     person: ["J. Cooper", "Васильев В.В."],
-    file: "file.pdf",
+    file: "file1.pdf",
   },
   {
     id: 7,
@@ -67,7 +67,7 @@ let data = [
     date: "2021-11-16",
     title: "Using bind mounts is very common for local development setups",
     person: ["Иванов И.И."],
-    file: "file.pdf",
+    file: "file1.pdf",
   },
   {
     id: 8,
@@ -77,7 +77,7 @@ let data = [
     title:
       "The advantage is that the dev machine does not need to have all of the build tools and environments installed",
     person: ["Александров А.А."],
-    file: "file.pdf",
+    file: "file1.pdf",
   },
   {
     id: 9,
@@ -87,7 +87,7 @@ let data = [
     title:
       "To run our container to support a development workflow, we will do the following",
     person: ["J. Cooper", "Сидоров С.С."],
-    file: "file.pdf",
+    file: "file1.pdf",
   },
   {
     id: 10,
@@ -96,7 +96,7 @@ let data = [
     date: "2021-12-05",
     title: "Install all dependencies, including the dev dependencies",
     person: ["J. Cooper"],
-    file: "file.pdf",
+    file: "file1.pdf",
   },
   {
     id: 11,
@@ -106,7 +106,7 @@ let data = [
     title:
       "Regional Paradigm Technician Regional Paradigm Technician Regional Paradigm Technician",
     person: ["J. Cooper", "Васильев В.В."],
-    file: "file.pdf",
+    file: "file1.pdf",
   },
   {
     id: 12,
@@ -115,7 +115,7 @@ let data = [
     date: "2021-11-16",
     title: "Using bind mounts is very common for local development setups",
     person: ["Иванов И.И."],
-    file: "file.pdf",
+    file: "file1.pdf",
   },
   {
     id: 13,
@@ -125,7 +125,7 @@ let data = [
     title:
       "The advantage is that the dev machine does not need to have all of the build tools and environments installed",
     person: ["Александров А.А."],
-    file: "file.pdf",
+    file: "file1.pdf",
   },
   {
     id: 14,
@@ -135,7 +135,7 @@ let data = [
     title:
       "To run our container to support a development workflow, we will do the following",
     person: ["J. Cooper", "Сидоров С.С."],
-    file: "file.pdf",
+    file: "file1.pdf",
   },
   {
     id: 15,
@@ -144,7 +144,7 @@ let data = [
     date: "2021-12-05",
     title: "Install all dependencies, including the dev dependencies",
     person: ["J. Cooper"],
-    file: "file.pdf",
+    file: "file1.pdf",
   },
 ];
 
@@ -180,6 +180,7 @@ export const changeDoc = (req, res) => {
 export const viewDoc = (req, res) => {
   const doc = data.find((r) => r.id === +req.params.id);
   const docPath = path.resolve("uploads/", doc.file);
+  // TODO send if file exist 
   if (path.extname(doc.file) === ".pdf") {
     res.status(200).sendFile(docPath);
   } else res.status(200).download(docPath);
