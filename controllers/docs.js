@@ -1,6 +1,9 @@
 import path from "path";
 import fs from "fs";
 import { validationResult } from "express-validator";
+import db from "../models/index.js";
+const Op = db.Sequelize.Op;
+const Doc = db.doc;
 
 let data = [
   {
@@ -203,4 +206,22 @@ export const detailDoc = (req, res) => {
   if (doc) {
     res.status(200).json(doc);
   } else res.status(404).end();
+};
+
+//
+//
+//
+
+export const seedDocs = (req, res) => {
+  Doc.bulkCreate(data, { fields: ["type", "num", "title", "date", "file"] })
+    .then(() => res.status(200).json({ message: "Ok" }))
+    .catch(() => res.status(500).end());
+};
+
+export const dropDocs = (req, res) => {
+  Doc.destroy({
+    truncate: true,
+  })
+    .then(() => res.status(200).json({ message: "Ok" }))
+    .catch(() => res.status(500).end());
 };
