@@ -5,11 +5,12 @@ import db from "../models/index.js";
 const Op = db.Sequelize.Op;
 const Doc = db.doc;
 const Doctype = db.doctype;
+const Employee = db.employee;
 
 let data = [
   {
     id: 1,
-    type: 1,
+    doctypeId: 1,
     num: `${Math.floor(Math.random() * 10000)}`,
     date: "2021-11-15",
     title:
@@ -19,7 +20,7 @@ let data = [
   },
   {
     id: 2,
-    type: 2,
+    doctypeId: 2,
     num: `${Math.floor(Math.random() * 10000)}`,
     date: "2021-11-16",
     title: "Using bind mounts is very common for local development setups",
@@ -28,7 +29,7 @@ let data = [
   },
   {
     id: 3,
-    type: 3,
+    doctypeId: 3,
     num: `${Math.floor(Math.random() * 10000)}`,
     date: "2021-11-17",
     title:
@@ -38,7 +39,7 @@ let data = [
   },
   {
     id: 4,
-    type: 4,
+    doctypeId: 4,
     num: `${Math.floor(Math.random() * 10000)}`,
     date: "2021-11-19",
     title:
@@ -48,7 +49,7 @@ let data = [
   },
   {
     id: 5,
-    type: 5,
+    doctypeId: 5,
     num: `${Math.floor(Math.random() * 10000)}`,
     date: "2021-12-05",
     title: "Install all dependencies, including the dev dependencies",
@@ -57,7 +58,7 @@ let data = [
   },
   {
     id: 6,
-    type: 6,
+    doctypeId: 6,
     num: `${Math.floor(Math.random() * 10000)}`,
     date: "2021-11-15",
     title:
@@ -67,7 +68,7 @@ let data = [
   },
   {
     id: 7,
-    type: 1,
+    doctypeId: 1,
     num: `${Math.floor(Math.random() * 10000)}`,
     date: "2021-11-16",
     title: "Using bind mounts is very common for local development setups",
@@ -76,7 +77,7 @@ let data = [
   },
   {
     id: 8,
-    type: 2,
+    doctypeId: 2,
     num: `${Math.floor(Math.random() * 10000)}`,
     date: "2021-11-17",
     title:
@@ -86,7 +87,7 @@ let data = [
   },
   {
     id: 9,
-    type: 3,
+    doctypeId: 3,
     num: `${Math.floor(Math.random() * 10000)}`,
     date: "2021-11-19",
     title:
@@ -96,7 +97,7 @@ let data = [
   },
   {
     id: 10,
-    type: 4,
+    doctypeId: 4,
     num: `${Math.floor(Math.random() * 10000)}`,
     date: "2021-12-05",
     title: "Install all dependencies, including the dev dependencies",
@@ -105,7 +106,7 @@ let data = [
   },
   {
     id: 11,
-    type: 5,
+    doctypeId: 5,
     num: `${Math.floor(Math.random() * 10000)}`,
     date: "2021-11-15",
     title:
@@ -115,7 +116,7 @@ let data = [
   },
   {
     id: 12,
-    type: 6,
+    doctypeId: 6,
     num: `${Math.floor(Math.random() * 10000)}`,
     date: "2021-11-16",
     title: "Using bind mounts is very common for local development setups",
@@ -124,7 +125,7 @@ let data = [
   },
   {
     id: 13,
-    type: 1,
+    doctypeId: 1,
     num: `${Math.floor(Math.random() * 10000)}`,
     date: "2021-11-17",
     title:
@@ -134,7 +135,7 @@ let data = [
   },
   {
     id: 14,
-    type: 2,
+    doctypeId: 2,
     num: `${Math.floor(Math.random() * 10000)}`,
     date: "2021-11-19",
     title:
@@ -144,7 +145,7 @@ let data = [
   },
   {
     id: 15,
-    type: 3,
+    doctypeId: 3,
     num: `${Math.floor(Math.random() * 10000)}`,
     date: "2021-12-05",
     title: "Install all dependencies, including the dev dependencies",
@@ -180,6 +181,13 @@ let doctypes = [
     icon_name: "DocumentDuplicateIcon",
   },
   { id: 6, text: "Иной", hint_text: "Иной", icon_name: "DocumentIcon" },
+];
+
+let persons = [
+  { fio: "Иванов И.И." },
+  { fio: "Сидоров С.С." },
+  { fio: "Васильев В.В." },
+  { fio: "Александров А.А." },
 ];
 
 export const getAllDocs = (req, res) => {
@@ -244,12 +252,18 @@ export const detailDoc = (req, res) => {
 
 export const seedDocs = async (req, res) => {
   try {
-    await Doc.bulkCreate(data, {
-      fields: ["type", "num", "title", "date", "file"],
-    });
     await Doctype.bulkCreate(doctypes, {
       fields: ["text", "hint_text", "icon_name"],
     });
+
+    await Doc.bulkCreate(data, {
+      fields: ["num", "title", "date", "file", "doctypeId"],
+    });
+
+    await Employee.bulkCreate(persons, {
+      fields: ["fio"],
+    });
+
     res.status(200).json({ message: "Ok" });
   } catch (e) {
     res.status(500).end();
@@ -262,6 +276,9 @@ export const dropDocs = async (req, res) => {
       truncate: true,
     });
     await Doctype.destroy({
+      truncate: true,
+    });
+    await Employee.destroy({
       truncate: true,
     });
     res.status(200).json({ message: "Ok" });

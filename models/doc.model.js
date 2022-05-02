@@ -1,8 +1,5 @@
 export default function (sequelize, Sequelize) {
-  const Doc = sequelize.define("Doc", {
-    type: {
-      type: Sequelize.INTEGER,
-    },
+  const Doc = sequelize.define("doc", {
     num: {
       type: Sequelize.STRING,
     },
