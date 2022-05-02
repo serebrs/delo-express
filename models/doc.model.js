@@ -1,5 +1,5 @@
 export default function (sequelize, Sequelize) {
-  const Doc = sequelize.define("doc", {
+  const Doc = sequelize.define("Doc", {
     type: {
       type: Sequelize.INTEGER,
     },

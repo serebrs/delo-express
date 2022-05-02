@@ -4,6 +4,7 @@ import { validationResult } from "express-validator";
 import db from "../models/index.js";
 const Op = db.Sequelize.Op;
 const Doc = db.doc;
+const Doctype = db.doctype;
 
 let data = [
   {
@@ -152,6 +153,35 @@ let data = [
   },
 ];
 
+let doctypes = [
+  { id: 1, text: "Входящий", hint_text: "Входящий", icon_name: "InboxInIcon" },
+  {
+    id: 2,
+    text: "Исходящий",
+    hint_text: "Исходящий",
+    icon_name: "ExternalLinkIcon",
+  },
+  {
+    id: 3,
+    text: "Норм. акт",
+    hint_text: "Нормативный",
+    icon_name: "DocumentTextIcon",
+  },
+  {
+    id: 4,
+    text: "Договор",
+    hint_text: "Договор",
+    icon_name: "DocumentDuplicateIcon",
+  },
+  {
+    id: 5,
+    text: "Конкурсная",
+    hint_text: "Конкурсная",
+    icon_name: "DocumentDuplicateIcon",
+  },
+  { id: 6, text: "Иной", hint_text: "Иной", icon_name: "DocumentIcon" },
+];
+
 export const getAllDocs = (req, res) => {
   if (data) res.status(200).json(data);
   else res.status(404).end();
@@ -212,16 +242,30 @@ export const detailDoc = (req, res) => {
 //
 //
 
-export const seedDocs = (req, res) => {
-  Doc.bulkCreate(data, { fields: ["type", "num", "title", "date", "file"] })
-    .then(() => res.status(200).json({ message: "Ok" }))
-    .catch(() => res.status(500).end());
+export const seedDocs = async (req, res) => {
+  try {
+    await Doc.bulkCreate(data, {
+      fields: ["type", "num", "title", "date", "file"],
+    });
+    await Doctype.bulkCreate(doctypes, {
+      fields: ["text", "hint_text", "icon_name"],
+    });
+    res.status(200).json({ message: "Ok" });
+  } catch (e) {
+    res.status(500).end();
+  }
 };
 
-export const dropDocs = (req, res) => {
-  Doc.destroy({
-    truncate: true,
-  })
-    .then(() => res.status(200).json({ message: "Ok" }))
-    .catch(() => res.status(500).end());
+export const dropDocs = async (req, res) => {
+  try {
+    await Doc.destroy({
+      truncate: true,
+    });
+    await Doctype.destroy({
+      truncate: true,
+    });
+    res.status(200).json({ message: "Ok" });
+  } catch (e) {
+    res.status(500).end();
+  }
 };

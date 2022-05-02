@@ -2,7 +2,8 @@ import express from "express";
 import cors from "cors";
 import "dotenv/config";
 import docsRouter from "./routes/docs.js";
-import db from "./models/index.js"
+import db from "./models/index.js";
+// db.sequelize.sync({ force: true });
 db.sequelize.sync();
 
 const PORT = process.env.PORT;
