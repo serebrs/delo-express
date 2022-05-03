@@ -4,11 +4,11 @@ export default function (sequelize, Sequelize) {
       type: Sequelize.STRING,
       defaultValue: "",
     },
-    hint_text: {
+    hintText: {
       type: Sequelize.STRING,
       defaultValue: "",
     },
-    icon_name: {
+    iconName: {
       type: Sequelize.STRING,
       defaultValue: "DocumentIcon",
     },

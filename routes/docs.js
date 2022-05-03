@@ -3,14 +3,14 @@ import { Router } from "express";
 import { checkSchema } from "express-validator";
 import { docsValidator } from "../validators/docs.js";
 import {
-  getAllDocs,
+  findAll,
   addDoc,
   deleteDoc,
   detailDoc,
   downloadDoc,
   changeDoc,
-  seedDocs,
-  dropDocs,
+  seed,
+  dropAll,
 } from "../controllers/docs.js";
 
 const storage = multer.diskStorage({
@@ -26,9 +26,9 @@ const upload = multer({ storage: storage });
 
 const router = Router();
 
-router.get("/api/docs", getAllDocs);
-router.get("/api/docs/seed", seedDocs);
-router.get("/api/docs/drop", dropDocs);
+router.get("/api/docs", findAll);
+router.get("/api/docs/seed", seed);
+router.get("/api/docs/drop", dropAll);
 router.get("/api/docs/:id", detailDoc);
 router.get("/api/docs/:id/download", downloadDoc);
 router.delete("/api/docs/:id", deleteDoc);

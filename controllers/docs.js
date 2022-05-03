@@ -155,32 +155,32 @@ let data = [
 ];
 
 let doctypes = [
-  { id: 1, text: "Входящий", hint_text: "Входящий", icon_name: "InboxInIcon" },
+  { id: 1, text: "Входящий", hintText: "Входящий", iconName: "InboxInIcon" },
   {
     id: 2,
     text: "Исходящий",
-    hint_text: "Исходящий",
-    icon_name: "ExternalLinkIcon",
+    hintText: "Исходящий",
+    iconName: "ExternalLinkIcon",
   },
   {
     id: 3,
     text: "Норм. акт",
-    hint_text: "Нормативный",
-    icon_name: "DocumentTextIcon",
+    hintText: "Нормативный",
+    iconName: "DocumentTextIcon",
   },
   {
     id: 4,
     text: "Договор",
-    hint_text: "Договор",
-    icon_name: "DocumentDuplicateIcon",
+    hintText: "Договор",
+    iconName: "DocumentDuplicateIcon",
   },
   {
     id: 5,
     text: "Конкурсная",
-    hint_text: "Конкурсная",
-    icon_name: "DocumentDuplicateIcon",
+    hintText: "Конкурсная",
+    iconName: "DocumentDuplicateIcon",
   },
-  { id: 6, text: "Иной", hint_text: "Иной", icon_name: "DocumentIcon" },
+  { id: 6, text: "Иной", hintText: "Иной", iconName: "DocumentIcon" },
 ];
 
 let persons = [
@@ -190,9 +190,40 @@ let persons = [
   { fio: "Александров А.А." },
 ];
 
-export const getAllDocs = (req, res) => {
-  if (data) res.status(200).json(data);
-  else res.status(404).end();
+let employee_docs = [
+  { docId: 1, employeeId: 2 },
+  { docId: 1, employeeId: 3 },
+  { docId: 2, employeeId: 1 },
+  { docId: 2, employeeId: 2 },
+  { docId: 2, employeeId: 4 },
+  { docId: 3, employeeId: 4 },
+  { docId: 4, employeeId: 1 },
+  { docId: 5, employeeId: 2 },
+  { docId: 6, employeeId: 4 },
+  { docId: 7, employeeId: 3 },
+  { docId: 8, employeeId: 4 },
+  { docId: 9, employeeId: 2 },
+  { docId: 10, employeeId: 4 },
+  { docId: 11, employeeId: 1 },
+  { docId: 12, employeeId: 1 },
+  { docId: 13, employeeId: 2 },
+  { docId: 14, employeeId: 4 },
+  { docId: 15, employeeId: 2 },
+];
+
+export const findAll = async (req, res) => {
+  try {
+    const docs = await Doc.findAll({
+      include: {
+        model: Employee,
+        attributes: ["fio"],
+        through: { attributes: [] },
+      },
+    });
+    res.status(200).json(docs);
+  } catch (e) {
+    res.status(404).end();
+  }
 };
 
 export const addDoc = (req, res) => {
@@ -250,10 +281,10 @@ export const detailDoc = (req, res) => {
 //
 //
 
-export const seedDocs = async (req, res) => {
+export const seed = async (req, res) => {
   try {
     await Doctype.bulkCreate(doctypes, {
-      fields: ["text", "hint_text", "icon_name"],
+      fields: ["text", "hintText", "iconName"],
     });
 
     await Doc.bulkCreate(data, {
@@ -270,7 +301,7 @@ export const seedDocs = async (req, res) => {
   }
 };
 
-export const dropDocs = async (req, res) => {
+export const dropAll = async (req, res) => {
   try {
     await Doc.destroy({
       truncate: true,
