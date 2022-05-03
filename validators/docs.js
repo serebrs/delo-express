@@ -1,5 +1,5 @@
 export const docsValidator = {
-  type: {
+  doctypeId: {
     isInt: {
       errorMessage: "Это поле должно быть числовым",
       options: { min: 0, max: 20 },
@@ -30,5 +30,5 @@ export const docsValidator = {
     },
     // toDate: true,
   },
-  person: {},
+  employees: {},
 };

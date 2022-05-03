@@ -214,30 +214,55 @@ let employee_docs = [
 export const findAll = async (req, res) => {
   try {
     const docs = await Doc.findAll({
-      include: {
-        model: Employee,
-        attributes: ["fio"],
-        through: { attributes: [] },
-      },
+      include: [
+        {
+          model: Doctype,
+          attributes: ["hintText", "iconName"],
+        },
+        {
+          model: Employee,
+          attributes: ["fio"],
+          through: { attributes: [] },
+        },
+      ],
     });
     res.status(200).json(docs);
   } catch (e) {
-    res.status(404).end();
+    res.status(400).end();
   }
 };
 
-export const addDoc = (req, res) => {
+export const create = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
-  const newDoc = {
-    id: Date.now(),
-    ...req.body,
+
+  const newDocData = {
+    num: req.body.num,
+    date: req.body.date,
+    title: req.body.title,
     file: req.file.filename,
   };
-  data.push(newDoc);
-  res.status(201).json(newDoc);
+
+  try {
+    let newEmployees = [];
+    for (let em of req.body.employees) {
+      let employee = await Employee.findByPk(+em);
+      if(employee) newEmployees.push(employee);
+    }
+
+    // TODO сделать транзацкию
+    const doctype = await Doctype.findByPk(req.body.doctypeId);
+    if (doctype) {
+      const newDoc = await doctype.createDoc(newDocData);
+      newDoc.setEmployees(newEmployees);
+      // newDoc.setEmployees(req.body.employees);
+      res.status(201).json({});
+    } else res.status(400).end();
+  } catch (e) {
+    res.status(400).end();
+  }
 };
 
 export const deleteDoc = (req, res) => {

@@ -4,7 +4,7 @@ import { checkSchema } from "express-validator";
 import { docsValidator } from "../validators/docs.js";
 import {
   findAll,
-  addDoc,
+  create,
   deleteDoc,
   detailDoc,
   downloadDoc,
@@ -36,7 +36,7 @@ router.post(
   "/api/docs",
   upload.single("file"),
   checkSchema(docsValidator),
-  addDoc
+  create
 );
 router.put(
   "/api/docs/:id",
