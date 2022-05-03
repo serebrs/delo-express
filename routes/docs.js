@@ -9,8 +9,8 @@ import {
   view,
   download,
   update,
-  seed,
-  dropAll,
+  // seed,
+  // dropAll,
 } from "../controllers/docs.js";
 
 const storage = multer.diskStorage({
@@ -27,8 +27,8 @@ const upload = multer({ storage: storage });
 const router = Router();
 
 router.get("/api/docs", findAll);
-router.get("/api/docs/seed", seed);
-router.get("/api/docs/drop", dropAll);
+// router.get("/api/docs/seed", seed);
+// router.get("/api/docs/drop", dropAll);
 router.get("/api/docs/:id", view);
 router.get("/api/docs/:id/download", download);
 router.delete("/api/docs/:id", destroy);
