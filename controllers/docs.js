@@ -244,12 +244,12 @@ export const create = async (req, res) => {
     title: req.body.title,
     file: req.file.filename,
   };
+  let newEmployees = [];
 
   try {
-    let newEmployees = [];
     for (let em of req.body.employees) {
       let employee = await Employee.findByPk(+em);
-      if(employee) newEmployees.push(employee);
+      if (employee) newEmployees.push(employee);
     }
 
     // TODO сделать транзацкию
@@ -265,41 +265,84 @@ export const create = async (req, res) => {
   }
 };
 
-export const deleteDoc = (req, res) => {
-  data = data.filter((r) => r.id !== +req.params.id);
-  if (data) res.status(200).json({ message: "Документ успешно удален" });
-  else res.status(404).end();
+export const destroy = async (req, res) => {
+  try {
+    await Doc.destroy({ where: { id: +req.params.id } });
+    res.status(200).json({ message: "Документ успешно удален" });
+  } catch (e) {
+    res.status(400).end();
+  }
 };
 
-export const changeDoc = (req, res) => {
-  let file;
-  const idx = data.findIndex((r) => r.id === +req.params.id);
-  if (~idx) {
-    // != -1
-    if (req.file) file = req.file.filename;
-    else file = data[idx].file;
-    data[idx] = { ...req.body, id: +req.params.id, file };
-    res.status(200).json({ message: "Документ успешно изменен" });
-  } else res.status(404).end();
+export const update = async (req, res) => {
+  // let file;
+  // const idx = data.findIndex((r) => r.id === +req.params.id);
+  // if (~idx) {
+  //   // != -1
+  //   if (req.file) file = req.file.filename;
+  //   else file = data[idx].file;
+  //   data[idx] = { ...req.body, id: +req.params.id, file };
+  //   res.status(200).json({ message: "Документ успешно изменен" });
+  // } else res.status(404).end();
+
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  const newDocData = {
+    num: req.body.num,
+    date: req.body.date,
+    title: req.body.title,
+  };
+  let newEmployees = [];
+
+  try {
+    const doc = await Doc.findByPk(+req.params.id);
+    let file;
+    if (doc) {
+      if (req.file) doc.file = req.file.filename;
+      
+
+
+      res.status(200).json(doc);
+    } else res.status(400).end();
+  } catch (e) {
+    res.status(400).end();
+  }
 };
 
-export const downloadDoc = (req, res) => {
-  const doc = data.find((r) => r.id === +req.params.id);
-  if (doc) {
-    const docPath = path.resolve("uploads/", doc.file);
-    if (fs.existsSync(docPath)) {
-      if (path.extname(doc.file) === ".pdf") {
-        res.status(200).sendFile(docPath);
-      } else res.status(200).download(docPath);
+export const download = async (req, res) => {
+  try {
+    const doc = await Doc.findByPk(+req.params.id, { attributes: ["file"] });
+    if (doc) {
+      const docPath = path.resolve("uploads/", doc.file);
+      if (fs.existsSync(docPath)) {
+        if (path.extname(doc.file) === ".pdf") {
+          res.status(200).sendFile(docPath);
+        } else res.status(200).download(docPath);
+      } else res.status(404).end();
     } else res.status(404).end();
-  } else res.status(404).end();
+  } catch (e) {
+    res.status(400).end();
+  }
 };
 
-export const detailDoc = (req, res) => {
-  const doc = data.find((r) => r.id === +req.params.id);
-  if (doc) {
+export const view = async (req, res) => {
+  try {
+    const doc = await Doc.findByPk(+req.params.id, {
+      include: [
+        {
+          model: Employee,
+          attributes: ["id"],
+          through: { attributes: [] },
+        },
+      ],
+    });
     res.status(200).json(doc);
-  } else res.status(404).end();
+  } catch (e) {
+    res.status(404).end();
+  }
 };
 
 //

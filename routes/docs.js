@@ -5,10 +5,10 @@ import { docsValidator } from "../validators/docs.js";
 import {
   findAll,
   create,
-  deleteDoc,
-  detailDoc,
-  downloadDoc,
-  changeDoc,
+  destroy,
+  view,
+  download,
+  update,
   seed,
   dropAll,
 } from "../controllers/docs.js";
@@ -29,9 +29,9 @@ const router = Router();
 router.get("/api/docs", findAll);
 router.get("/api/docs/seed", seed);
 router.get("/api/docs/drop", dropAll);
-router.get("/api/docs/:id", detailDoc);
-router.get("/api/docs/:id/download", downloadDoc);
-router.delete("/api/docs/:id", deleteDoc);
+router.get("/api/docs/:id", view);
+router.get("/api/docs/:id/download", download);
+router.delete("/api/docs/:id", destroy);
 router.post(
   "/api/docs",
   upload.single("file"),
@@ -42,7 +42,7 @@ router.put(
   "/api/docs/:id",
   upload.single("file"),
   checkSchema(docsValidator),
-  changeDoc
+  update
 );
 
 export default router;
