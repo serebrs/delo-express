@@ -30,5 +30,4 @@ export const docsValidator = {
     },
     // toDate: true,
   },
-  employees: {},
 };
