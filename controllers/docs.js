@@ -275,16 +275,6 @@ export const destroy = async (req, res) => {
 };
 
 export const update = async (req, res) => {
-  // let file;
-  // const idx = data.findIndex((r) => r.id === +req.params.id);
-  // if (~idx) {
-  //   // != -1
-  //   if (req.file) file = req.file.filename;
-  //   else file = data[idx].file;
-  //   data[idx] = { ...req.body, id: +req.params.id, file };
-  //   res.status(200).json({ message: "Документ успешно изменен" });
-  // } else res.status(404).end();
-
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
