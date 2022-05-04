@@ -2,6 +2,8 @@ import path from "path";
 import fs from "fs";
 import { validationResult } from "express-validator";
 import db from "../models/index.js";
+// import docsSeed from "../sql/docs.js";
+
 const Op = db.Sequelize.Op;
 const Doc = db.doc;
 const Doctype = db.doctype;
@@ -367,6 +369,10 @@ export const seed = async (req, res) => {
     await Employee.bulkCreate(persons, {
       fields: ["fio"],
     });
+
+    // await Doc.bulkCreate(docsSeed, {
+    //   fields: ["num", "title", "date", "doctypeId"],
+    // });
 
     res.status(200).json({ message: "Ok" });
   } catch (e) {
