@@ -212,7 +212,6 @@ let employee_docs = [
 ];
 
 export const findAll = async (req, res) => {
-  console.log("!!!!!!!!!!!!" + JSON.stringify(req.query));
   try {
     const condition1 =
       req.query.doctypeId === "-1" ? null : { id: req.query.doctypeId };
