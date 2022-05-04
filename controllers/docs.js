@@ -212,17 +212,32 @@ let employee_docs = [
 ];
 
 export const findAll = async (req, res) => {
+  console.log("!!!!!!!!!!!!" + JSON.stringify(req.query));
   try {
+    const condition1 =
+      req.query.doctypeId === "-1" ? null : { id: req.query.doctypeId };
+    const condition2 =
+      req.query.employees === "-1" ? null : { id: req.query.employees };
+
     const docs = await Doc.findAll({
+      where: {
+        title: { [Op.like]: `%${req.query.title}%` },
+        date: {
+          [Op.gte]: req.query.dateFrom,
+          [Op.lte]: req.query.dateTo,
+        },
+      },
       include: [
         {
           model: Doctype,
           attributes: ["hintText", "iconName"],
+          where: condition1,
         },
         {
           model: Employee,
           attributes: ["fio"],
           through: { attributes: [] },
+          where: condition2,
         },
       ],
     });
@@ -280,7 +295,8 @@ export const update = async (req, res) => {
     return res.status(400).json({ errors: errors.array() });
   }
 
-  try {// TODO сделать транзакцию
+  try {
+    // TODO сделать транзакцию
     const doctype = await Doctype.findByPk(+req.body.doctypeId);
     if (!doctype) throw new Error();
     const doc = await Doc.findByPk(+req.params.id);
@@ -292,7 +308,7 @@ export const update = async (req, res) => {
     doc.title = req.body.title;
     //doc.doctypeId = req.body.doctypeId;
     await doc.setDoctype(doctype);
-    
+
     let newEmployees = [];
     for (let em of req.body.employees) {
       let employee = await Employee.findByPk(+em);
