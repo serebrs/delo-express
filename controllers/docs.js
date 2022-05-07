@@ -257,32 +257,31 @@ export const create = async (req, res) => {
     return res.status(400).json({ message });
   }
 
-  if (!req.file)
-    return res.status(400).json({ message: "Не заполнено поле 'Файл'" });
-
   try {
+    if (!req.file) throw new Error("Не заполнено поле 'Файл'");
+
+    const doctype = await Doctype.findByPk(req.body.doctypeId);
+    if (!doctype) throw new Error("Неверный тип документа");
+
     const newDocData = {
       num: req.body.num,
       date: req.body.date,
       title: req.body.title,
       file: req.file.filename,
     };
-    let newEmployees = [];
-
-    for (let em of req.body.employees) {
-      let employee = await Employee.findByPk(+em);
-      if (employee) newEmployees.push(employee);
-    }
 
     // TODO сделать транзакцию
-    const doctype = await Doctype.findByPk(req.body.doctypeId);
-    if (doctype) {
-      const newDoc = await doctype.createDoc(newDocData);
+    const newDoc = await doctype.createDoc(newDocData);
+    if (req.body.employees) {
+      let newEmployees = [];
+      for (let em of req.body.employees) {
+        let employee = await Employee.findByPk(+em);
+        if (employee) newEmployees.push(employee);
+      }
       newDoc.setEmployees(newEmployees);
-      res.status(201).json({ message: "Новый документ добавлен" });
-    } else res.status(400).json({ message: "Неверный тип документа" });
+    }
+    res.status(201).json({ message: "Новый документ добавлен" });
   } catch (e) {
-    console.log("!!!!!!!!!ERROR: " + e.message);
     res.status(400).json({ message: e.message });
   }
 };
@@ -299,33 +298,39 @@ export const destroy = async (req, res) => {
 export const update = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
+    const message = errors
+      .array()
+      .reduce((msg, err) => (msg += err.param + ": " + err.msg + "; "), "");
+    return res.status(400).json({ message });
   }
 
   try {
     // TODO сделать транзакцию
-    const doctype = await Doctype.findByPk(+req.body.doctypeId);
-    if (!doctype) throw new Error();
-    const doc = await Doc.findByPk(+req.params.id);
-    if (!doc) throw new Error();
+    const doctype = await Doctype.findByPk(req.body.doctypeId);
+    if (!doctype) throw new Error("Неверный тип документа");
+
+    const doc = await Doc.findByPk(req.params.id);
+    if (!doc) throw new Error("Документ для редактирования не найден");
 
     if (req.file) doc.file = req.file.filename;
     doc.num = req.body.num;
     doc.date = req.body.date;
     doc.title = req.body.title;
-    //doc.doctypeId = req.body.doctypeId;
+
     await doc.setDoctype(doctype);
 
-    let newEmployees = [];
-    for (let em of req.body.employees) {
-      let employee = await Employee.findByPk(+em);
-      if (employee) newEmployees.push(employee);
+    if (req.body.employees) {
+      let newEmployees = [];
+      for (let em of req.body.employees) {
+        let employee = await Employee.findByPk(+em);
+        if (employee) newEmployees.push(employee);
+      }
+      await doc.setEmployees(newEmployees);
     }
-    await doc.setEmployees(newEmployees);
     await doc.save();
-    res.status(200).json(doc);
+    res.status(200).json({ message: "Документ успешно изменен" });
   } catch (e) {
-    res.status(400).end();
+    res.status(400).json({ message: e.message });
   }
 };
 
