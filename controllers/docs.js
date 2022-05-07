@@ -242,9 +242,9 @@ export const findAll = async (req, res) => {
         },
       ],
     });
-    res.status(200).json(docs);
+    res.status(200).json({ message: "Список документов", data: docs });
   } catch (e) {
-    res.status(400).end();
+    res.status(400).json({ message: e.message });
   }
 };
 
@@ -288,10 +288,12 @@ export const create = async (req, res) => {
 
 export const destroy = async (req, res) => {
   try {
-    await Doc.destroy({ where: { id: +req.params.id } });
+    const d = await Doc.destroy({ where: { id: +req.params.id } });
+    if (!d) throw new Error("Документ для удаления не найден");
+
     res.status(200).json({ message: "Документ успешно удален" });
   } catch (e) {
-    res.status(400).end();
+    res.status(400).json({ message: e.message });
   }
 };
 
@@ -337,16 +339,15 @@ export const update = async (req, res) => {
 export const download = async (req, res) => {
   try {
     const doc = await Doc.findByPk(+req.params.id, { attributes: ["file"] });
-    if (doc) {
-      const docPath = path.resolve("uploads/", doc.file);
-      if (fs.existsSync(docPath)) {
-        if (path.extname(doc.file) === ".pdf") {
-          res.status(200).sendFile(docPath);
-        } else res.status(200).download(docPath);
-      } else res.status(404).end();
-    } else res.status(404).end();
+    if (!doc) throw new Error("Документ для просмотра не найден");
+    const docPath = path.resolve("uploads/", doc.file);
+    if (fs.existsSync(docPath)) {
+      if (path.extname(doc.file) === ".pdf") {
+        res.status(200).sendFile(docPath);
+      } else res.status(200).download(docPath);
+    } else res.status(404).json({ message: "Файл документа не найден" });
   } catch (e) {
-    res.status(400).end();
+    res.status(400).json({ message: e.message });
   }
 };
 
@@ -361,9 +362,10 @@ export const view = async (req, res) => {
         },
       ],
     });
-    res.status(200).json(doc);
+    if (!doc) throw new Error("Документ не найден");
+    res.status(200).json({ message: "Просмотр документа", data: doc });
   } catch (e) {
-    res.status(404).end();
+    res.status(404).json({ message: e.message });
   }
 };
 
