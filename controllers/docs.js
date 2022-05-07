@@ -251,33 +251,39 @@ export const findAll = async (req, res) => {
 export const create = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
+    const message = errors
+      .array()
+      .reduce((msg, err) => (msg += err.param + ": " + err.msg + "; "), "");
+    return res.status(400).json({ message });
   }
 
-  const newDocData = {
-    num: req.body.num,
-    date: req.body.date,
-    title: req.body.title,
-    file: req.file.filename,
-  };
-  let newEmployees = [];
+  if (!req.file)
+    return res.status(400).json({ message: "Не заполнено поле 'Файл'" });
 
   try {
+    const newDocData = {
+      num: req.body.num,
+      date: req.body.date,
+      title: req.body.title,
+      file: req.file.filename,
+    };
+    let newEmployees = [];
+
     for (let em of req.body.employees) {
       let employee = await Employee.findByPk(+em);
       if (employee) newEmployees.push(employee);
     }
 
-    // TODO сделать транзацкию
+    // TODO сделать транзакцию
     const doctype = await Doctype.findByPk(req.body.doctypeId);
     if (doctype) {
       const newDoc = await doctype.createDoc(newDocData);
       newDoc.setEmployees(newEmployees);
-      // newDoc.setEmployees(req.body.employees);
-      res.status(201).json({});
-    } else res.status(400).end();
+      res.status(201).json({ message: "Новый документ добавлен" });
+    } else res.status(400).json({ message: "Неверный тип документа" });
   } catch (e) {
-    res.status(400).end();
+    console.log("!!!!!!!!!ERROR: " + e.message);
+    res.status(400).json({ message: e.message });
   }
 };
 

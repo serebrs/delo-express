@@ -5,7 +5,6 @@ import docsRouter from "./routes/docs.js";
 import doctypesRouter from "./routes/doctypes.js";
 import employeesRouter from "./routes/employees.js";
 import db from "./models/index.js";
-// db.sequelize.sync({ force: true });
 db.sequelize.sync();
 
 const PORT = process.env.PORT;
@@ -29,4 +28,9 @@ app.use(employeesRouter);
 
 app.listen(PORT, () => {
   console.log(`Сервер запущен, порт: ${PORT}`);
+});
+
+process.on("uncaughtException", (err) => {
+  console.error("Непредвиденная ошибка. Приложение закрыто.", err);
+  process.exit(1);
 });
