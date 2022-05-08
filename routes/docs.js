@@ -2,6 +2,7 @@ import multer from "multer";
 import { Router } from "express";
 import { checkSchema } from "express-validator";
 import { docsValidator } from "../validators/docs.js";
+import { docsFilterValidator } from "../validators/docsFilter.js";
 import {
   findAll,
   create,
@@ -25,7 +26,7 @@ const upload = multer({ storage: storage });
 
 const router = Router();
 
-router.get("/api/docs", findAll);
+router.get("/api/docs", checkSchema(docsFilterValidator), findAll);
 router.get("/api/docs/seed", seed);
 router.get("/api/docs/:id", view);
 router.get("/api/docs/:id/download", download);

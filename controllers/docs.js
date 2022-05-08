@@ -215,29 +215,25 @@ let employee_docs = [
 ];
 
 export const findAll = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const message = errors
+      .array()
+      .reduce((msg, err) => (msg += err.param + ": " + err.msg + "; "), "");
+    return res.status(400).json({ message });
+  }
+
   try {
     const title = req.query.title || "";
-    const doctypeId = +req.query.doctypeId;
-    const employees = +req.query.employees;
-    const dateTo = req.query.dateTo;
-    const dateFrom = req.query.dateFrom;
-
-    if (!moment(dateFrom, "YYYY-MM-DD", true).isValid() || !moment(dateTo, "YYYY-MM-DD", true).isValid())
-      throw new Error("Недопустимая дата");
-    if (!Number.isInteger(doctypeId))
-      throw new Error("Недопустимый тип документа");
-    if (!Number.isInteger(employees))
-      throw new Error("Недопустимый параметр 'employees'");
-
-    const conditionDoctype = doctypeId === -1 ? null : { id: doctypeId };
-    const conditionEmployees = employees === -1 ? null : { id: employees };
+    const conditionDoctype = req.query.doctypeId === -1 ? null : { id: req.query.doctypeId };
+    const conditionEmployees = req.query.employees === -1 ? null : { id: req.query.employees };
 
     const docs = await Doc.findAll({
       where: {
         title: { [Op.like]: `%${title}%` },
         date: {
-          [Op.gte]: dateFrom,
-          [Op.lte]: dateTo,
+          [Op.gte]: req.query.dateFrom,
+          [Op.lte]: req.query.dateTo,
         },
       },
       include: [
