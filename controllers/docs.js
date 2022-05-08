@@ -2,6 +2,7 @@ import path from "path";
 import fs from "fs";
 import { validationResult } from "express-validator";
 import db from "../models/index.js";
+import moment from "moment";
 // import docsSeed from "../sql/docs.js";
 
 const Op = db.Sequelize.Op;
@@ -215,30 +216,41 @@ let employee_docs = [
 
 export const findAll = async (req, res) => {
   try {
-    const condition1 =
-      req.query.doctypeId === "-1" ? null : { id: req.query.doctypeId };
-    const condition2 =
-      req.query.employees === "-1" ? null : { id: req.query.employees };
+    const title = req.query.title || "";
+    const doctypeId = +req.query.doctypeId;
+    const employees = +req.query.employees;
+    const dateTo = req.query.dateTo;
+    const dateFrom = req.query.dateFrom;
+
+    if (!moment(dateFrom, "YYYY-MM-DD", true).isValid() || !moment(dateTo, "YYYY-MM-DD", true).isValid())
+      throw new Error("Недопустимая дата");
+    if (!Number.isInteger(doctypeId))
+      throw new Error("Недопустимый тип документа");
+    if (!Number.isInteger(employees))
+      throw new Error("Недопустимый параметр 'employees'");
+
+    const conditionDoctype = doctypeId === -1 ? null : { id: doctypeId };
+    const conditionEmployees = employees === -1 ? null : { id: employees };
 
     const docs = await Doc.findAll({
       where: {
-        title: { [Op.like]: `%${req.query.title}%` },
+        title: { [Op.like]: `%${title}%` },
         date: {
-          [Op.gte]: req.query.dateFrom,
-          [Op.lte]: req.query.dateTo,
+          [Op.gte]: dateFrom,
+          [Op.lte]: dateTo,
         },
       },
       include: [
         {
           model: Doctype,
           attributes: ["hintText", "iconName"],
-          where: condition1,
+          where: conditionDoctype,
         },
-        {
+        { // FIXME 
           model: Employee,
           attributes: ["fio"],
           through: { attributes: [] },
-          where: condition2,
+          where: conditionEmployees,
         },
       ],
     });
