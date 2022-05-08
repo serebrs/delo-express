@@ -214,19 +214,25 @@ let employee_docs = [
   { docId: 15, employeeId: 2 },
 ];
 
-export const findAll = async (req, res) => {
+function validate(req) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     const message = errors
       .array()
       .reduce((msg, err) => (msg += err.param + ": " + err.msg + "; "), "");
-    return res.status(400).json({ message });
+    throw new Error(message);
   }
+}
 
+export const findAll = async (req, res) => {
   try {
+    validate(req);
+
     const title = req.query.title || "";
-    const conditionDoctype = req.query.doctypeId === -1 ? null : { id: req.query.doctypeId };
-    const conditionEmployees = req.query.employees === -1 ? null : { id: req.query.employees };
+    const conditionDoctype =
+      req.query.doctypeId === -1 ? null : { id: req.query.doctypeId };
+    const conditionEmployees =
+      req.query.employees === -1 ? null : { id: req.query.employees };
 
     const docs = await Doc.findAll({
       where: {
@@ -242,7 +248,8 @@ export const findAll = async (req, res) => {
           attributes: ["hintText", "iconName"],
           where: conditionDoctype,
         },
-        { // FIXME 
+        {
+          // FIXME
           model: Employee,
           attributes: ["fio"],
           through: { attributes: [] },
@@ -257,15 +264,9 @@ export const findAll = async (req, res) => {
 };
 
 export const create = async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const message = errors
-      .array()
-      .reduce((msg, err) => (msg += err.param + ": " + err.msg + "; "), "");
-    return res.status(400).json({ message });
-  }
-
   try {
+    validate(req);
+
     if (!req.file) throw new Error("Не заполнено поле 'Файл'");
 
     const doctype = await Doctype.findByPk(req.body.doctypeId);
@@ -295,8 +296,11 @@ export const create = async (req, res) => {
 };
 
 export const destroy = async (req, res) => {
+  
   try {
-    const d = await Doc.destroy({ where: { id: +req.params.id } });
+    validate(req);
+
+    const d = await Doc.destroy({ where: { id: req.params.id } });
     if (!d) throw new Error("Документ для удаления не найден");
 
     res.status(200).json({ message: "Документ успешно удален" });
@@ -306,15 +310,9 @@ export const destroy = async (req, res) => {
 };
 
 export const update = async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const message = errors
-      .array()
-      .reduce((msg, err) => (msg += err.param + ": " + err.msg + "; "), "");
-    return res.status(400).json({ message });
-  }
-
   try {
+    validate(req);
+
     // TODO сделать транзакцию
     const doctype = await Doctype.findByPk(req.body.doctypeId);
     if (!doctype) throw new Error("Неверный тип документа");
@@ -346,7 +344,9 @@ export const update = async (req, res) => {
 
 export const download = async (req, res) => {
   try {
-    const doc = await Doc.findByPk(+req.params.id, { attributes: ["file"] });
+    validate(req);
+
+    const doc = await Doc.findByPk(req.params.id, { attributes: ["file"] });
     if (!doc) throw new Error("Документ для просмотра не найден");
     const docPath = path.resolve("uploads/", doc.file);
     if (fs.existsSync(docPath)) {
@@ -361,7 +361,9 @@ export const download = async (req, res) => {
 
 export const view = async (req, res) => {
   try {
-    const doc = await Doc.findByPk(+req.params.id, {
+    validate(req);
+
+    const doc = await Doc.findByPk(req.params.id, {
       include: [
         {
           model: Employee,
