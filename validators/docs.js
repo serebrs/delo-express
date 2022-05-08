@@ -13,7 +13,7 @@ export const docsValidator = {
       errorMessage: "Это поле должно быть не короче 5 символов",
     },
     matches: {
-      options: /[а-яА-ЯёЁa-zA-Z0-9№!?@()"'.,/:;-]+$/i,
+      options: /^[а-яА-ЯёЁa-zA-Z0-9 №!?@()"'.,/:;-]+$/i,
       errorMessage: "Это поле должно быть буквенно-числовым",
     },
   },
@@ -24,7 +24,7 @@ export const docsValidator = {
       errorMessage: "Это поле должно быть не короче 1 символа",
     },
     matches: {
-      options: /[а-яА-ЯёЁa-zA-Z0-9№()/-]+$/i,
+      options: /^[а-яА-ЯёЁa-zA-Z0-9 №()/-]+$/i,
       errorMessage: "Это поле должно быть буквенно-числовым",
     },    
   },
